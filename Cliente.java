@@ -4,16 +4,16 @@ public class Cliente {
     private String nome;
     private String cpf;
 
-    public getNome(){
+    public String getNome(){
         return nome;
     }
     public String getCpf(){
         return cpf;
     }
-    public setNome(String nome){
+    public void setNome(String nome){
         this.nome = nome;
     }
-    public setCpf(int cpf){
+    public void setCpf(String cpf){
         this.cpf = cpf;
     }
 
@@ -25,7 +25,6 @@ public class Cliente {
             cpf = s.nextLine().trim();
             if(cpf.isEmpty()){
                 System.out.println("Entrada inválida! \n");
-                // Entrada não pode não ser int nem ser 0.
             }
             break;
         }
@@ -35,5 +34,4 @@ public class Cliente {
 		String str = sc.nextLine();
         self.setNome(str);
     }
-
 }
