@@ -29,8 +29,7 @@ public class Cliente {
         }
         this.setCpf(cpf);
         System.out.println("Insira o nome do cliente");
-        Scanner sc = new Scanner(System.in);
-		String str = sc.nextLine();
-        self.setNome(str);
+        String str = s.nextLine();
+        this.setNome(str);
     }
 }
