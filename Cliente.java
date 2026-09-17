@@ -26,7 +26,6 @@ public class Cliente {
             if(cpf.isEmpty()){
                 System.out.println("Entrada inválida! \n");
             }
-            break;
         }
         this.setCpf(cpf);
         System.out.println("Insira o nome do cliente");
