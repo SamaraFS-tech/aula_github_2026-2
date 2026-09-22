@@ -1,5 +1,5 @@
 public class Conta {
-    private int numero;
+    private final int numero;
     private double saldo;
 
     public Conta(int numero) {
