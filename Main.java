@@ -65,16 +65,11 @@ public class Main {
                         if (opConta == 1) {
                             System.out.println("Informe o CPF do cliente para vincular à nova conta:");
                             Scanner s = new Scanner(System.in);
-                            int cpfBusca = 0;
-                            try {
-                                cpfBusca = Integer.parseInt(s.nextLine());
-                            } catch (NumberFormatException e) {
-                                System.out.println("Entrada inválida!");
-                            }
+                            String cpfBusca = s.nextLine().trim();
 
                             Cliente clienteEncontrado = null;
                             for (Cliente c : clientes) {
-                                if (c.getCpf() == cpfBusca) {
+                                if (c.getCpf().equals(cpfBusca)) {
                                     clienteEncontrado = c;
                                     break;
                                 }
@@ -118,32 +113,25 @@ public class Main {
                             System.out.println("\nCliente cadastrado com sucesso!\n");
                         }
                         else if (op1 == 2) {
-                            int cpf = 0;
-                            while (cpf == 0) {
-                                System.out.println("Informe o CPF que deseja buscar:");
-                                Scanner s = new Scanner(System.in);
-                                try {
-                                    cpf = Integer.parseInt(s.nextLine());
-                                } catch (NumberFormatException e) {
-                                }
+                            System.out.println("Informe o CPF que deseja buscar:");
+                            Scanner s = new Scanner(System.in);
+                            String cpf = s.nextLine().trim();
 
-                                if (cpf == 0) {
-                                    System.out.println("Entrada inválida! O CPF não pode ser 0 ou vazio.\n");
-                                    break;
-                                }
-
-                                boolean achou = false;
-                                for (Cliente c : clientes) {
-                                    if (c.getCpf() == cpf) {
-                                        System.out.println("\nNome do cliente: " + c.getNome());
-                                        System.out.println("CPF do cliente: " + c.getCpf() + "\n");
-                                        achou = true;
-                                    }
-                                }
-                                if (!achou) {
-                                    System.out.println("\nNenhum cliente encontrado com este CPF.\n");
-                                }
+                            if (cpf.isEmpty()) {
+                                System.out.println("Entrada inválida! O CPF não pode ser vazio.\n");
                                 break;
+                            }
+
+                            boolean achou = false;
+                            for (Cliente c : clientes) {
+                                if (c.getCpf().equals(cpf)) {
+                                    System.out.println("\nNome do cliente: " + c.getNome());
+                                    System.out.println("CPF do cliente: " + c.getCpf() + "\n");
+                                    achou = true;
+                                }
+                            }
+                            if (!achou) {
+                                System.out.println("\nNenhum cliente encontrado com este CPF.\n");
                             }
                         }
                         op1 = menuCliente.getSelection();
