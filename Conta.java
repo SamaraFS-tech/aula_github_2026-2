@@ -19,18 +19,47 @@ public class Conta {
         this.numeroConta = gerarNumeroConta();
         this.historico = new ArrayList<>();
     }
+
     public List<Movimentacao> getHistorico() {
-         return historico; }
-         
+        return historico;
+    }
+
     // Método auxiliar para simular a geração de um número único
     private String gerarNumeroConta() {
         Random random = new Random();
         int num = 10000 + random.nextInt(90000); 
         return String.valueOf(num) + "-" + random.nextInt(9);
     }
+
+    /**
+     * Requisito #18 - Realizar depósito.
+     * Critérios de aceitação:
+     *  - Aceitar apenas valores maiores que zero.
+     *  - Atualizar o saldo da conta.
+     * @return true se o depósito foi realizado, false caso contrário.
+     */
+    public boolean depositar(double valor) {
+        if (!ativa) {
+            return false;
+        }
+        if (valor <= 0) {
+            return false;
+        }
+        this.saldo += valor;
+        historico.add(new Movimentacao("Depósito", valor));
+        return true;
+    }
+
     public boolean realizarOperacao(String tipo, double valor) {
-        if (!ativa) return false;
-        
+        // Requisito: O valor do depósito deve ser maior que zero
+        if (tipo.equalsIgnoreCase("Depósito") && valor <= 0) {
+            return false;
+        }
+
+        if (!ativa) {
+            return false;
+        }
+
         if (tipo.equalsIgnoreCase("Saque") || tipo.equalsIgnoreCase("Transferência-Saída")) {
             if (this.saldo >= valor) {
                 this.saldo -= valor;
@@ -45,11 +74,21 @@ public class Conta {
         return true;
     }
 
-    public Cliente getCliente() { return cliente; }
-    public String getNumeroConta() { return numeroConta; }
-    public String getAgencia() { return agencia; }
-    public double getSaldo() { return saldo; }
-    public boolean isAtiva() { return ativa; }
+    public Cliente getCliente() {
+        return cliente;
+    }
+    public String getNumeroConta() {
+        return numeroConta;
+    }
+    public String getAgencia() {
+        return agencia;
+    }
+    public double getSaldo() {
+        return saldo;
+    }
+    public boolean isAtiva() {
+        return ativa;
+    }
 
     @Override
     public String toString() {
