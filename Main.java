@@ -110,11 +110,108 @@ public class Main {
                     }
                     break;
                     
-                case 3: // Operacoes (Ainda não implementado)
-                    System.out.println("\nMenu de Operações em desenvolvimento...\n");
-                    break;
+                case 3: // Operacoes
+                    Menu menuOperacoes = new Menu("Menu Operações", Arrays.asList("Realizar Operação", "Extrato (Histórico)", "Voltar"));
+                    int opOperacoes = menuOperacoes.getSelection();
+                    
+                    while (opOperacoes != 3) {
+                        Scanner scOp = new Scanner(System.in);
+                        
+                        if (opOperacoes == 1) {
+                            System.out.println("Informe o número da conta (ex: 12345-6):");
+                            String numConta = scOp.nextLine();
+                            Conta contaAlvo = null;
+                            
+                            for (Conta c : contas) {
+                                if (c.getNumeroConta().equals(numConta)) {
+                                    contaAlvo = c;
+                                    break;
+                                }
+                            }
+                            
+                            if (contaAlvo != null) {
+                                System.out.println("Tipo (Saque, Depósito, Transferência-Saída, Transferência-Entrada):");
+                                String tipo = scOp.nextLine();
+                                System.out.println("Valor:");
+                                double valor = 0;
+                                try { valor = Double.parseDouble(scOp.nextLine()); } catch(Exception e){}
+                                
+                                if (contaAlvo.realizarOperacao(tipo, valor)) {
+                                    System.out.println("Operação realizada com sucesso. Novo saldo: R$ " + contaAlvo.getSaldo() + "\n");
+                                } else {
+                                    System.out.println("Falha na operação. Verifique o saldo ou status da conta.\n");
+                                }
+                            } else {
+                                System.out.println("Conta não encontrada.\n");
+                            }
+                        } 
+                        else if (opOperacoes == 2) {
+                            System.out.println("Informe o número da conta para o extrato:");
+                            String numConta = scOp.nextLine();
+                            Conta contaAlvo = null;
+                            
+                            for (Conta c : contas) {
+                                if (c.getNumeroConta().equals(numConta)) {
+                                    contaAlvo = c;
+                                    break;
+                                }
+                            }
+                            
+                            if (contaAlvo != null) {
+                                System.out.println("Filtrar a partir da data (dd/MM/yyyy) ou deixe em branco para ver tudo:");
+                                String dataInicioStr = scOp.nextLine();
+                                java.time.LocalDate dataInicio = null;
+                                
+                                if (!dataInicioStr.trim().isEmpty()) {
+                                    try {
+                                        dataInicio = java.time.LocalDate.parse(dataInicioStr, java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                                    } catch (Exception e) {
+                                        System.out.println("Formato de data inválido. Exibindo todo o histórico.");
+                                    }
+                                }
 
-                default:
+                                StringBuilder relatorio = new StringBuilder();
+                                relatorio.append("\n--- Extrato da Conta ").append(contaAlvo.getNumeroConta()).append(" ---\n");
+                                relatorio.append("Titular: ").append(contaAlvo.getCliente().getNome()).append("\n\n");
+                                
+                                boolean encontrouMov = false;
+                                for (Movimentacao mov : contaAlvo.getHistorico()) {
+                                    java.time.LocalDate dataMov = mov.getDataHora().toLocalDate();
+                                    // Se dataInicio não for nula, ignora movimentos anteriores a essa data
+                                    if (dataInicio != null && dataMov.isBefore(dataInicio)) {
+                                        continue;
+                                    }
+                                    relatorio.append(mov.formatarParaExibicao()).append("\n");
+                                    encontrouMov = true;
+                                }
+                                
+                                if (!encontrouMov) {
+                                    relatorio.append("Nenhuma movimentação encontrada no período.\n");
+                                }
+                                
+                                relatorio.append("----------------------------------\n");
+                                relatorio.append("Saldo Atual: R$ ").append(contaAlvo.getSaldo()).append("\n");
+                                
+                                System.out.println(relatorio.toString());
+                                
+                                System.out.println("Deseja exportar este extrato para arquivo TXT? (S/N)");
+                                if (scOp.nextLine().equalsIgnoreCase("S")) {
+                                    try {
+                                        java.io.FileWriter writer = new java.io.FileWriter("Extrato_" + contaAlvo.getNumeroConta() + ".txt");
+                                        writer.write(relatorio.toString());
+                                        writer.close();
+                                        System.out.println("Arquivo gerado com sucesso!\n");
+                                    } catch (java.io.IOException e) {
+                                        System.out.println("Erro ao gerar o arquivo.\n");
+                                    }
+                                }
+
+                            } else {
+                                System.out.println("Conta não encontrada.\n");
+                            }
+                        }
+                        opOperacoes = menuOperacoes.getSelection();
+                    }
                     break;
             }
             op = mainMenu.getSelection();
