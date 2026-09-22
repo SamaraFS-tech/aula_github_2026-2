@@ -28,7 +28,7 @@ public class Cliente {
             }
         }
         this.setCpf(cpf);
-        System.out.println("Insira o nome do cliente");
+        System.out.println("Insira o nome do cliente:");
         String str = s.nextLine();
         this.setNome(str);
     }
