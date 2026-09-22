@@ -2,14 +2,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import Cliente.java;
-
 public class Main {
 
 	public static void main(String[] args) {
 
-        ArrayList clientes = new ArrayList<Cliente>();
-        ArrayList<Conta> contas = new ArrayList<Conta>();
+        ArrayList<Cliente> clientes = new ArrayList<>();
+        ArrayList<Conta> contas = new ArrayList<>();
 
 		Menu mainMenu =  new Menu("Menu Principal", Arrays.asList("Conta", "Cliente", "Operacoes", "Sair"));
 		int op = mainMenu.getSelection();
@@ -58,38 +56,34 @@ public class Main {
                     }
                     break;
                 case 2:
-                    Menu menuCliente = new Menu("Menu Cliente", Arrays.aslist("Cadastrar Cliente", "Encontrar Cliente", "Voltar"));
+                    Menu menuCliente = new Menu("Menu Cliente", Arrays.asList("Cadastrar Cliente", "Encontrar Cliente", "Voltar"));
                     int op1 = menuCliente.getSelection();
                     System.out.println(op1 + "foi selecionada");
                     while (op1 != 3){
-                        System.out.println( op1 + "foi selecionada");
-                    }
-                    break;
-                    if(op1 == 1){
-                        Cliente c = new Cliente();
-                        c.cadastrarCliente();
-                        clientes.add(c);
-                    }
-                    if(op1 == 2){
-                        int cpf = 0;
-                        while(cpf == 0){
+                        if(op1 == 1){
+                            Cliente c = new Cliente();
+                            c.cadastrarCliente();
+                            clientes.add(c);
+                        }
+                        if(op1 == 2){
+                            System.out.println("Insira o CPF do cliente:");
                             Scanner s = new Scanner(System.in);
-                            try {
-                                cpf = Integer.parseInt(s.nextLine());
-                            }
-                            catch (NumberFormatException e) {}
-                            if(cpf == 0){
-                                System.out.println("Entrada inválida! \n");
-                                // Entrada não pode não ser int nem ser 0.
-                            }
-                            for( Client c : clientes){
-                                if (c.getCpf() == cpf){
-                                    System.out.println("Nome do cliente: " + c.getNome() + "\n" + "CPF do cliente" + c.getCpf() + "\n");
+                            String cpf = s.nextLine().trim();
+                            boolean encontrado = false;
+                            for(Cliente c : clientes){
+                                if (c.getCpf().equals(cpf)){
+                                    System.out.println("Nome do cliente: " + c.getNome() + "\n" + "CPF do cliente: " + c.getCpf() + "\n");
+                                    encontrado = true;
+                                    break;
                                 }
                             }
-                            break;
+                            if(!encontrado){
+                                System.out.println("Cliente não encontrado!\n");
+                            }
                         }
+                        op1 = menuCliente.getSelection();
                     }
+                    break;
                 
             
                 default:
