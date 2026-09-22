@@ -6,7 +6,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ArrayList<Cliente> clientes = new ArrayList<Cliente>();
+        ArrayList<Cliente> clientes = new ArrayList<>();
+        ArrayList<Conta> contas = new ArrayList<>();
         ArrayList<Conta> contas = new ArrayList<Conta>(); // Lista para armazenar as contas
 
         Menu mainMenu = new Menu("Menu Principal", Arrays.asList("Conta", "Cliente", "Operacoes", "Sair"));
@@ -15,6 +16,46 @@ public class Main {
 
         while (op != 4) {
             switch (op) {
+                case 3:
+                    Menu menuOperacoes = new Menu("Menu Operacoes", Arrays.asList("Depositar", "Voltar"));
+                    int op3 = menuOperacoes.getSelection();
+                    System.out.println(op3 + " foi selecionada");
+                    while (op3 != 2) {
+                        if (op3 == 1) {
+                            System.out.println("Informe o número da conta:");
+                            Scanner scanConta = new Scanner(System.in);
+                            int numeroConta = 0;
+                            try {
+                                numeroConta = Integer.parseInt(scanConta.nextLine());
+                            } catch (NumberFormatException e) {
+                                System.out.println("Número inválido!");
+                            }
+
+                            Conta contaEncontrada = null;
+                            for (Conta c : contas) {
+                                if (c.getNumero() == numeroConta) {
+                                    contaEncontrada = c;
+                                    break;
+                                }
+                            }
+
+                            if (contaEncontrada != null) {
+                                System.out.println("Informe o valor do depósito:");
+                                Scanner scanValor = new Scanner(System.in);
+                                double valor = 0;
+                                try {
+                                    valor = Double.parseDouble(scanValor.nextLine());
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Valor inválido!");
+                                }
+                                contaEncontrada.depositar(valor);
+                            } else {
+                                System.out.println("Conta não encontrada!");
+                            }
+                        }
+                        op3 = menuOperacoes.getSelection();
+                    }
+                    break;
                 case 1: // Menu Conta
                     Menu menuConta = new Menu("Menu Conta", Arrays.asList("Abrir Conta", "Listar Contas", "Voltar"));
                     int opConta = menuConta.getSelection();
@@ -24,16 +65,11 @@ public class Main {
                         if (opConta == 1) {
                             System.out.println("Informe o CPF do cliente para vincular à nova conta:");
                             Scanner s = new Scanner(System.in);
-                            int cpfBusca = 0;
-                            try {
-                                cpfBusca = Integer.parseInt(s.nextLine());
-                            } catch (NumberFormatException e) {
-                                System.out.println("Entrada inválida!");
-                            }
+                            String cpfBusca = s.nextLine().trim();
 
                             Cliente clienteEncontrado = null;
                             for (Cliente c : clientes) {
-                                if (c.getCpf() == cpfBusca) {
+                                if (c.getCpf().equals(cpfBusca)) {
                                     clienteEncontrado = c;
                                     break;
                                 }
@@ -58,7 +94,7 @@ public class Main {
                             }
                             System.out.println("-----------------------\n");
                         }
-                        
+
                         opConta = menuConta.getSelection();
                         System.out.println(opConta + " foi selecionada");
                     }
@@ -68,74 +104,67 @@ public class Main {
                     Menu menuCliente = new Menu("Menu Cliente", Arrays.asList("Cadastrar Cliente", "Encontrar Cliente", "Voltar"));
                     int op1 = menuCliente.getSelection();
                     System.out.println(op1 + " foi selecionada");
-                    
+
                     while (op1 != 3) {
                         if (op1 == 1) {
                             Cliente c = new Cliente();
                             c.cadastrarCliente();
                             clientes.add(c);
                             System.out.println("\nCliente cadastrado com sucesso!\n");
-                        } 
+                        }
                         else if (op1 == 2) {
-                            int cpf = 0;
-                            while (cpf == 0) {
-                                System.out.println("Informe o CPF que deseja buscar:");
-                                Scanner s = new Scanner(System.in);
-                                try {
-                                    cpf = Integer.parseInt(s.nextLine());
-                                } catch (NumberFormatException e) {
-                                }
-                                
-                                if (cpf == 0) {
-                                    System.out.println("Entrada inválida! O CPF não pode ser 0 ou vazio.\n");
-                                    break;
-                                }
-                                
-                                boolean achou = false;
-                                for (Cliente c : clientes) {
-                                    if (c.getCpf() == cpf) {
-                                        System.out.println("\nNome do cliente: " + c.getNome());
-                                        System.out.println("CPF do cliente: " + c.getCpf() + "\n");
-                                        achou = true;
-                                    }
-                                }
-                                if (!achou) {
-                                    System.out.println("\nNenhum cliente encontrado com este CPF.\n");
-                                }
+                            System.out.println("Informe o CPF que deseja buscar:");
+                            Scanner s = new Scanner(System.in);
+                            String cpf = s.nextLine().trim();
+
+                            if (cpf.isEmpty()) {
+                                System.out.println("Entrada inválida! O CPF não pode ser vazio.\n");
                                 break;
+                            }
+
+                            boolean achou = false;
+                            for (Cliente c : clientes) {
+                                if (c.getCpf().equals(cpf)) {
+                                    System.out.println("\nNome do cliente: " + c.getNome());
+                                    System.out.println("CPF do cliente: " + c.getCpf() + "\n");
+                                    achou = true;
+                                }
+                            }
+                            if (!achou) {
+                                System.out.println("\nNenhum cliente encontrado com este CPF.\n");
                             }
                         }
                         op1 = menuCliente.getSelection();
                         System.out.println(op1 + " foi selecionada");
                     }
                     break;
-                    
+
                 case 3: // Operacoes
                     Menu menuOperacoes = new Menu("Menu Operações", Arrays.asList("Realizar Operação", "Extrato (Histórico)", "Voltar"));
                     int opOperacoes = menuOperacoes.getSelection();
-                    
+
                     while (opOperacoes != 3) {
                         Scanner scOp = new Scanner(System.in);
-                        
+
                         if (opOperacoes == 1) {
                             System.out.println("Informe o número da conta (ex: 12345-6):");
                             String numConta = scOp.nextLine();
                             Conta contaAlvo = null;
-                            
+
                             for (Conta c : contas) {
                                 if (c.getNumeroConta().equals(numConta)) {
                                     contaAlvo = c;
                                     break;
                                 }
                             }
-                            
+
                             if (contaAlvo != null) {
                                 System.out.println("Tipo (Saque, Depósito, Transferência-Saída, Transferência-Entrada):");
                                 String tipo = scOp.nextLine();
                                 System.out.println("Valor:");
                                 double valor = 0;
                                 try { valor = Double.parseDouble(scOp.nextLine()); } catch(Exception e){}
-                                
+
                                 if (contaAlvo.realizarOperacao(tipo, valor)) {
                                     System.out.println("Operação realizada com sucesso. Novo saldo: R$ " + contaAlvo.getSaldo() + "\n");
                                 } else {
@@ -144,24 +173,24 @@ public class Main {
                             } else {
                                 System.out.println("Conta não encontrada.\n");
                             }
-                        } 
+                        }
                         else if (opOperacoes == 2) {
                             System.out.println("Informe o número da conta para o extrato:");
                             String numConta = scOp.nextLine();
                             Conta contaAlvo = null;
-                            
+
                             for (Conta c : contas) {
                                 if (c.getNumeroConta().equals(numConta)) {
                                     contaAlvo = c;
                                     break;
                                 }
                             }
-                            
+
                             if (contaAlvo != null) {
                                 System.out.println("Filtrar a partir da data (dd/MM/yyyy) ou deixe em branco para ver tudo:");
                                 String dataInicioStr = scOp.nextLine();
                                 java.time.LocalDate dataInicio = null;
-                                
+
                                 if (!dataInicioStr.trim().isEmpty()) {
                                     try {
                                         dataInicio = java.time.LocalDate.parse(dataInicioStr, java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
@@ -173,7 +202,7 @@ public class Main {
                                 StringBuilder relatorio = new StringBuilder();
                                 relatorio.append("\n--- Extrato da Conta ").append(contaAlvo.getNumeroConta()).append(" ---\n");
                                 relatorio.append("Titular: ").append(contaAlvo.getCliente().getNome()).append("\n\n");
-                                
+
                                 boolean encontrouMov = false;
                                 for (Movimentacao mov : contaAlvo.getHistorico()) {
                                     java.time.LocalDate dataMov = mov.getDataHora().toLocalDate();
@@ -184,16 +213,16 @@ public class Main {
                                     relatorio.append(mov.formatarParaExibicao()).append("\n");
                                     encontrouMov = true;
                                 }
-                                
+
                                 if (!encontrouMov) {
                                     relatorio.append("Nenhuma movimentação encontrada no período.\n");
                                 }
-                                
+
                                 relatorio.append("----------------------------------\n");
                                 relatorio.append("Saldo Atual: R$ ").append(contaAlvo.getSaldo()).append("\n");
-                                
+
                                 System.out.println(relatorio.toString());
-                                
+
                                 System.out.println("Deseja exportar este extrato para arquivo TXT? (S/N)");
                                 if (scOp.nextLine().equalsIgnoreCase("S")) {
                                     try {
