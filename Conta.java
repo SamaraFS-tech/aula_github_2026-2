@@ -73,6 +73,31 @@ public class Conta {
         return true;
     }
 
+    /**
+     * Requisito #15 - Transferência entre duas contas (operação única).
+     * Debita a origem e credita o destino somente se a origem tiver saldo.
+     * @return true se a transferência foi realizada, false caso contrário.
+     */
+    public boolean transferir(Conta destino, double valor) {
+        if (destino == null) {
+            return false;
+        }
+        if (!this.ativa || !destino.isAtiva()) {
+            return false;
+        }
+        if (valor <= 0) {
+            return false;
+        }
+        if (this.saldo < valor) {
+            return false; // Saldo insuficiente na origem
+        }
+        this.saldo -= valor;
+        this.historico.add(new Movimentacao("Transferência-Enviada", valor));
+        destino.saldo += valor;
+        destino.historico.add(new Movimentacao("Transferência-Recebida", valor));
+        return true;
+    }
+
     public boolean realizarOperacao(String tipo, double valor) {
         if (tipo.equalsIgnoreCase("Saque")) {
             return sacar(valor);
