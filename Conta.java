@@ -50,28 +50,37 @@ public class Conta {
         return true;
     }
 
-    public boolean realizarOperacao(String tipo, double valor) {
-        // Requisito: O valor do depósito deve ser maior que zero
-        if (tipo.equalsIgnoreCase("Depósito") && valor <= 0) {
-            return false;
-        }
-
+    /**
+     * Requisito #14 - Realizar saque.
+     * Critérios de aceitação:
+     *  - Impedir saques com valores negativos ou zerados.
+     *  - Verificar se a conta possui saldo suficiente.
+     *  - Subtrair o valor do saldo em caso de sucesso.
+     * @return true se o saque foi realizado, false caso contrário.
+     */
+    public boolean sacar(double valor) {
         if (!ativa) {
             return false;
         }
-
-        if (tipo.equalsIgnoreCase("Saque") || tipo.equalsIgnoreCase("Transferência-Saída")) {
-            if (this.saldo >= valor) {
-                this.saldo -= valor;
-            } else {
-                return false; // Saldo insuficiente
-            }
-        } else if (tipo.equalsIgnoreCase("Depósito") || tipo.equalsIgnoreCase("Transferência-Entrada")) {
-            this.saldo += valor;
+        if (valor <= 0) {
+            return false;
         }
-        
-        historico.add(new Movimentacao(tipo, valor));
+        if (this.saldo < valor) {
+            return false; // Saldo insuficiente
+        }
+        this.saldo -= valor;
+        historico.add(new Movimentacao("Saque", valor));
         return true;
+    }
+
+    public boolean realizarOperacao(String tipo, double valor) {
+        if (tipo.equalsIgnoreCase("Saque")) {
+            return sacar(valor);
+        }
+        if (tipo.equalsIgnoreCase("Depósito")) {
+            return depositar(valor);
+        }
+        return false; // Tipo de operação desconhecido
     }
 
     public Cliente getCliente() {
