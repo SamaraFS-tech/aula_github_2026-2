@@ -7,8 +7,7 @@ public class Main {
     public static void main(String[] args) {
 
         ArrayList<Cliente> clientes = new ArrayList<>();
-        ArrayList<Conta> contas = new ArrayList<>();
-        ArrayList<Conta> contas = new ArrayList<Conta>(); // Lista para armazenar as contas
+        ArrayList<Conta> contas = new ArrayList<>(); // Lista para armazenar as contas
 
         Menu mainMenu = new Menu("Menu Principal", Arrays.asList("Conta", "Cliente", "Operacoes", "Sair"));
         int op = mainMenu.getSelection();
@@ -16,46 +15,6 @@ public class Main {
 
         while (op != 4) {
             switch (op) {
-                case 3:
-                    Menu menuOperacoes = new Menu("Menu Operacoes", Arrays.asList("Depositar", "Voltar"));
-                    int op3 = menuOperacoes.getSelection();
-                    System.out.println(op3 + " foi selecionada");
-                    while (op3 != 2) {
-                        if (op3 == 1) {
-                            System.out.println("Informe o número da conta:");
-                            Scanner scanConta = new Scanner(System.in);
-                            int numeroConta = 0;
-                            try {
-                                numeroConta = Integer.parseInt(scanConta.nextLine());
-                            } catch (NumberFormatException e) {
-                                System.out.println("Número inválido!");
-                            }
-
-                            Conta contaEncontrada = null;
-                            for (Conta c : contas) {
-                                if (c.getNumero() == numeroConta) {
-                                    contaEncontrada = c;
-                                    break;
-                                }
-                            }
-
-                            if (contaEncontrada != null) {
-                                System.out.println("Informe o valor do depósito:");
-                                Scanner scanValor = new Scanner(System.in);
-                                double valor = 0;
-                                try {
-                                    valor = Double.parseDouble(scanValor.nextLine());
-                                } catch (NumberFormatException e) {
-                                    System.out.println("Valor inválido!");
-                                }
-                                contaEncontrada.depositar(valor);
-                            } else {
-                                System.out.println("Conta não encontrada!");
-                            }
-                        }
-                        op3 = menuOperacoes.getSelection();
-                    }
-                    break;
                 case 1: // Menu Conta
                     Menu menuConta = new Menu("Menu Conta", Arrays.asList("Abrir Conta", "Listar Contas", "Voltar"));
                     int opConta = menuConta.getSelection();
@@ -140,13 +99,40 @@ public class Main {
                     break;
 
                 case 3: // Operacoes
-                    Menu menuOperacoes = new Menu("Menu Operações", Arrays.asList("Realizar Operação", "Extrato (Histórico)", "Voltar"));
+                    Menu menuOperacoes = new Menu("Menu Operações", Arrays.asList("Depositar", "Realizar Operação", "Extrato (Histórico)", "Voltar"));
                     int opOperacoes = menuOperacoes.getSelection();
 
-                    while (opOperacoes != 3) {
+                    while (opOperacoes != 4) {
                         Scanner scOp = new Scanner(System.in);
 
                         if (opOperacoes == 1) {
+                            // Requisito #18 - Realizar Depósito
+                            System.out.println("Informe o número da conta (ex: 12345-6):");
+                            String numContaDeposito = scOp.nextLine().trim();
+                            Conta contaDeposito = localizarConta(contas, numContaDeposito);
+
+                            if (contaDeposito == null) {
+                                System.out.println("Conta não encontrada.\n");
+                            } else {
+                                System.out.println("Informe o valor do depósito:");
+                                double valorDeposito;
+                                try {
+                                    valorDeposito = Double.parseDouble(scOp.nextLine().trim());
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Valor inválido!\n");
+                                    valorDeposito = 0;
+                                }
+
+                                if (valorDeposito <= 0) {
+                                    System.out.println("Falha no depósito: o valor deve ser maior que zero.\n");
+                                } else if (contaDeposito.depositar(valorDeposito)) {
+                                    System.out.println("Depósito realizado com sucesso. Novo saldo: R$ " + contaDeposito.getSaldo() + "\n");
+                                } else {
+                                    System.out.println("Falha no depósito. Verifique o status da conta.\n");
+                                }
+                            }
+                        }
+                        else if (opOperacoes == 2) {
                             System.out.println("Informe o número da conta (ex: 12345-6):");
                             String numConta = scOp.nextLine();
                             Conta contaAlvo = null;
@@ -174,7 +160,7 @@ public class Main {
                                 System.out.println("Conta não encontrada.\n");
                             }
                         }
-                        else if (opOperacoes == 2) {
+                        else if (opOperacoes == 3) {
                             System.out.println("Informe o número da conta para o extrato:");
                             String numConta = scOp.nextLine();
                             Conta contaAlvo = null;
@@ -248,5 +234,18 @@ public class Main {
         }
 
         System.out.println("Fim");
+    }
+
+    /**
+     * Requisito #18 - Localizar a conta pelo número.
+     * @return a Conta correspondente ou null se não encontrada.
+     */
+    private static Conta localizarConta(ArrayList<Conta> contas, String numero) {
+        for (Conta c : contas) {
+            if (c.getNumeroConta().equals(numero)) {
+                return c;
+            }
+        }
+        return null;
     }
 }
